@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const { AddProfile, FindAllProfile, findSingleProfile, DeleteProfile, EditProfile } = require('../controllers/profiles.controllers');
+const { AddProfile, FindAllProfile, findSingleProfile, DeleteProfile, EditProfile, skipProfile } = require('../controllers/profiles.controllers');
 const { ROLES, isRole } = require('../security/Rolemiddleware');
 const router = express.Router()
 const multer = require('multer');
@@ -18,14 +18,15 @@ const fileFilter = (req, file, cb) => {
   }
 };
 const uploads = multer({ storage, fileFilter });
-  
-  // Profiles admin                                                                                                                                                                                                                       
-  // addProfile 
-  
+
+  // Profiles admin
+  // addProfile
+
 //   router.route('/').post(passport.authenticate('jwt', {session: false}),uploads.single('profile'), AddProfile);
-// Profiles admin                                                                                                                                                                                                                       
-// addProfile 
+// Profiles admin
+// addProfile
 router.route('/upload-profile',uploads.single('avatar')).post(passport.authenticate('jwt', {session: false}), AddProfile)
+router.route('/skip-profile',uploads.single('avatar')).post(passport.authenticate('jwt', {session: false}), skipProfile)
 router.route('/',uploads.single('avatar')).post(passport.authenticate('jwt', {session: false}), AddProfile)
 
 //find All profile

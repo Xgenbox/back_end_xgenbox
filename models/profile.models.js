@@ -8,11 +8,11 @@ const profileSchema = new Schema({
         required:true
 
     },
-   
+
     tel:{
         type:String,
-        required:true,
-        unique:true
+        // required:true,
+        // unique:true
     },
     avatar: String,
     address:"string",

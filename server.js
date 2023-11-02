@@ -66,16 +66,65 @@ app.get('/api/governorates', (req, res)=>{
   governoratesModel.find()
   .then(governorates => res.json(governorates))
   .catch(err => res.status(400).json('Error: ' + err));
-  
-  
+
+
 })
 app.get('/zied', (req, res)=>{
 
   res.send('hello world')
-  
-  
-  
+
+
+
 })
+
+
+app.post('/sendsms', (req, res) => {
+  // Extract phone number and OTP code from the request body
+  const phoneNumber = req.body.phoneNumber;
+  const otpCode = req.body.otpCode;
+
+  // Download the helper library from https://www.twilio.com/docs/node/install
+  // Set environment variables for your credentials
+  // Read more at http://twil.io/secure
+  const accountSid = "ACc88dab16de0d7778d8a00d899baf5d4a";
+  const authToken = "076e3375c1ff3ee2a33fa81e1c8619d6";
+  const verifySid = "VA0b803b56061e0d4a3ae293393aed7a0b";
+  const client = require("twilio")(accountSid, authToken);
+
+  // Create a verification request
+  client.verify.v2
+    .services(verifySid)
+    .verifications.create({ to: phoneNumber, channel: "sms" })
+    .then((verification) => {
+      console.log(verification.status);
+      // You can send a response to the client here if needed
+      res.send("Verification request sent!");
+    })
+    .then(() => {
+      const readline = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      readline.question("Please enter the OTP:", (enteredOtpCode) => {
+        if (enteredOtpCode === otpCode) {
+          client.verify.v2
+            .services(verifySid)
+            .verificationChecks.create({ to: phoneNumber, code: otpCode })
+            .then((verification_check) => {
+              console.log(verification_check.status);
+              // You can send a response to the client here if needed
+              res.send("OTP verification status: " + verification_check.status);
+            })
+            .then(() => readline.close());
+        } else {
+          // Handle incorrect OTP code
+          res.status(400).send("Incorrect OTP code");
+          readline.close();
+        }
+      });
+    });
+});
+
 
 app.get('/health', function(req,res) {
   res.status(200).json({msg: 'Server is running'})
@@ -110,7 +159,7 @@ function fetchDataAndSubscribe() {
       const topicGaz = bin.topicGaz;
       const topicNiv = bin.topicNiv;
 
-      // subscribe to topics Using Amal client 
+      // subscribe to topics Using Amal client
       client.subscribe(topicOuv, (err) => {
         if (err) {
           // console.error(`Error subscribing to topic ${topicOuv}:`, err);
@@ -134,7 +183,7 @@ function fetchDataAndSubscribe() {
         }
         console.log(`Subscribed to topic ${topicNiv}`);
       });
-      
+
       client.on('message', (topic, message) => {
         if (topic === topicOuv) {
           bin.valueOuv = message.toString();
@@ -191,7 +240,7 @@ function fetchDataAndSubscribe() {
         }
         console.log(`Subscribed to topic ${topicNiv}`);
       });
-      
+
       client2.on('message', (topic, message) => {
         if (topic === topicOuv) {
           bin.valueOuv = message.toString();
@@ -235,7 +284,7 @@ app.post('/sendsms', (req, res) => {
   const { msg, tel } = req.body;
   console.log(msg, tel)
   console.log(msg);
-  
+
   const username = 'admin';
   const password = 'expressmobidle$$2018';
   const authHeader = `Basic Auth ${Buffer.from(`${username}:${password}`).toString('base64')}`;
@@ -244,7 +293,7 @@ app.post('/sendsms', (req, res) => {
 
 
     'Authorization': authHeader,
-    
+
 
   };
 const body = JSON.stringify({tel:tel, msg:msg})
@@ -252,7 +301,7 @@ const body = JSON.stringify({tel:tel, msg:msg})
   axios.post('http://sms.expressdisplay.net/v1/sendsms', body, {
     headers,
   },
-  
+
   )
     .then(response => {
       // Handle the API response

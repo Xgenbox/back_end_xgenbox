@@ -2,27 +2,44 @@ const profileModels = require("../models/profile.models")
 const profileInputValidator = require("../validation/profile2")
 const cloudinary = require('../utils/uploadImage')
 
+const skipProfile = async (req, res) => {
+  try {
+      // Assuming profileModels is your Mongoose model for profiles
+      const profile = await profileModels.findOne({ user: req.user.id });
+
+      if (!profile) {
+          // If a profile doesn't exist, create an empty one
+          const data = await profileModels.create({ user: req.user.id });
+          res.status(200).json({ data, success: true });
+      } else {
+          // Profile already exists
+          res.status(200).json({ message: "Profile already exists", success: true });
+      }
+  } catch (error) {
+      res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+}
 const FindAllProfile = async(req, res)=>{
     // res.send('ok')
     try {
         const data = await profileModels.find().populate('user', ["name", "email", "role"])
         res.status(200).json(data)
-        
+
     } catch (error) {
         res.status(500).json({message: "error"})
-        
-    }    
+
+    }
 }
 const AddProfile = async(req, res)=>{
-   
+
     const {isValid, errors} = profileInputValidator(req.body)
     console.log(req.body)
-    
+
     try {
         if(!isValid) {
             console.log("error is here")
             res.status(404).json(errors)
-        } else {   
+        } else {
             if(req.files?.avatar?.size > 0){
                 const result = await cloudinary.uploader.upload(req.files.avatar.path, {
                     public_id: `${req.user.id}_profile`,
@@ -33,7 +50,7 @@ const AddProfile = async(req, res)=>{
                 console.log(result)
                 req.body.avatar = result.secure_url
             }
-          
+
             console.log(req.body)
             const profile = await profileModels.findOne({user: req.user.id})
             if(!profile){
@@ -78,15 +95,16 @@ const AddProfile = async(req, res)=>{
 }
 
 const EditProfile = async (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
+    // console.log(req.files?.avatar?.size)
     try {
       const profile = await profileModels.findOne({ user: req.user.id });
       if (!profile) {
         return res.status(404).json({ error: "Profile not found" });
       }
-  
+
       const { tel, avatar, address, city, country, postalCode, bio } = req.body;
-  
+
       if (tel) {
         const telExist = await profileModels.findOne({ tel });
         if (telExist && telExist.user.toString() !== req.user.id) {
@@ -94,58 +112,59 @@ const EditProfile = async (req, res) => {
         }
         profile.tel = tel;
       }
-  
-      if (avatar) {
-        // Upload avatar and update profile
-        const result = await cloudinary.uploader.upload(avatar.path, {
-          public_id: `${req.user.id}_profile`,
-          width: 500,
-          height: 500,
-          crop: "fill",
+
+      if(req.files?.avatar?.size > 0){
+        const result = await cloudinary.uploader.upload(req.files.avatar.path, {
+            public_id: `${req.user.id}_profile`,
+            width: 500,
+            height: 500,
+            crop: 'fill',
         });
-        profile.avatar = result.secure_url;
-      }
-  
+        // console.log(result)
+        profile.avatar = result.secure_url
+    }
+
       if (address) {
         profile.address = address;
       }
-  
+
       if (city) {
         profile.city = city;
       }
-  
+
       if (country) {
         profile.country = country;
       }
-  
+
       if (postalCode) {
         profile.postalCode = postalCode;
       }
-  
+
       if (bio) {
         profile.bio = bio;
       }
-  
+
       const updatedProfile = await profile.save();
-  
+      console.log(updatedProfile)
+
       res.status(200).json(updatedProfile);
     } catch (error) {
       res.status(500).json({ error: "Internal Server Error" });
     }
   };
-  
+
 // const AddProfile = async(req, res)=>{
-   
+
 //     const {isValid, errors} = profileInputValidator(req.body)
 //     const telExist = await profileModels.find({tel: req.body.tel})
 //     // console.log(req)
-    
+
 // // console.log("result", result)
 //    try {
 //     if(!isValid) {
 //         res.status(404).json(errors)
-//     }else{   
-      
+//     }else{
+
 //         if(req.files?.avatar?.size>0){
 //             const result = await cloudinary.uploader.upload(req.files.avatar.path, {
 //                 public_id: `${req.user.id}_profile`,
@@ -156,8 +175,8 @@ const EditProfile = async (req, res) => {
 //             req.body.avatar = result.secure_url
 //         }
 //         console.log(req.body)
-      
-        
+
+
 //         profileModels.findOne({user: req.user.id})
 //         .then(async (profile)=>{
 //             if(!profile){
@@ -174,7 +193,7 @@ const EditProfile = async (req, res) => {
 //                 }
 //             }else{
 //                 // if(!(telExist1[0].tel === req.body.tel)){
-                    
+
 //                     await profileModels.findOneAndUpdate(
 //                         {user: req.user.id},
 //                         req.body,
@@ -193,7 +212,7 @@ const EditProfile = async (req, res) => {
 
 //                                 res.status(500).json({message: "error"})
 //                             }
-                            
+
 //                         })
 //                     // }else{
 //                     //     errors.tel = "tel already exist"
@@ -201,13 +220,13 @@ const EditProfile = async (req, res) => {
 //                     // }
 //                     }
 //                 })
-      
-            
+
+
 //     }
-    
+
 //    } catch (error) {
 //     res.status(500).json({message1: "error2", message: error.message})
-    
+
 //    }
 // }
 // const AddProfile = async(req, res)=>{
@@ -215,10 +234,10 @@ const EditProfile = async (req, res) => {
 //    try {
 //     if(!isValid) {
 //         res.status(404).json(errors)
-//     }else{   
+//     }else{
 //         // console.log(req.body)
 //         const telExist = await profileModels.find({tel: req.body.tel})
-        
+
 //         profileModels.findOne({user: req.user.id})
 //         .then(async (profile)=>{
 //             if(!profile){
@@ -233,7 +252,7 @@ const EditProfile = async (req, res) => {
 //                 }
 //             }else{
 //                 // if(!(telExist1[0].tel === req.body.tel)){
-                    
+
 //                     await profileModels.findOneAndUpdate(
 //                         {user: req.user.id},
 //                         req.body,
@@ -252,7 +271,7 @@ const EditProfile = async (req, res) => {
 
 //                                 res.status(500).json({message: "error"})
 //                             }
-                            
+
 //                         })
 //                     // }else{
 //                     //     errors.tel = "tel already exist"
@@ -260,26 +279,26 @@ const EditProfile = async (req, res) => {
 //                     // }
 //                     }
 //                 })
-      
-            
+
+
 //     }
-    
+
 //    } catch (error) {
 //     res.status(500).json({message: "error2"})
-    
+
 //    }
 // }
 
 const findSingleProfile = async(req, res)=>{
     var userId = req.query.id;
-    
+
     try {
        const data = await profileModels.find({user: req.user.id}).populate('user', ['name', 'email', 'role'])
        res.status(200).json(...data)
-        
+
     } catch (error) {
         res.status(500).json({message: error.message})
-        
+
     }
 }
 
@@ -293,11 +312,11 @@ const DeleteProfile = async(req, res)=>{
 
         res. status(200).json({message: "profile deleted successfully"})
     }
-    
+
    } catch (error) {
     res.status(500).send('error server')
 
-    
+
    }
 }
 
@@ -306,6 +325,7 @@ module.exports = {
     AddProfile,
     findSingleProfile,
     DeleteProfile,
-    EditProfile
+    EditProfile,
+    skipProfile
 }
 
