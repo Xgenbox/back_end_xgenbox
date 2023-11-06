@@ -6,6 +6,7 @@ require('colors');
 require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes.js');
+const collectorRoutes = require('./routes/Collector.route');
 const profiles = require('./routes/profiles.route');
 const demandeMunicipal = require('./routes/demandeMunicipal.route');
 const binRoute = require('./routes/bin.route');
@@ -53,6 +54,7 @@ app.post("/forgot-password", forgotPassword )
 // router.post("/reset-password", resetPassword )
 app.post("/reset-password",isResetTokenValid,  resetPassword )
 app.use('/api/users', userRoutes);
+app.use('/api/collector', collectorRoutes);
 
 app.use('/api/profile', profiles);
 app.use('/api/access', access);
@@ -96,7 +98,7 @@ app.post('/sendsms', (req, res) => {
     .services(verifySid)
     .verifications.create({ to: phoneNumber, channel: "sms" })
     .then((verification) => {
-      console.log(verification.status);
+      // console.log(verification.status);
       // You can send a response to the client here if needed
       res.send("Verification request sent!");
     })
@@ -111,7 +113,7 @@ app.post('/sendsms', (req, res) => {
             .services(verifySid)
             .verificationChecks.create({ to: phoneNumber, code: otpCode })
             .then((verification_check) => {
-              console.log(verification_check.status);
+              // console.log(verification_check.status);
               // You can send a response to the client here if needed
               res.send("OTP verification status: " + verification_check.status);
             })
@@ -143,7 +145,7 @@ const client2 = mqtt.connect('tls://f8f43b3a505c48d7934f2734eb410119.s2.eu.hivem
 client.on('connect', function() {
   client.subscribe('waste_level');
 
-  console.log("client has been subscribed successfully");
+  // console.log("client has been subscribed successfully");
 });
 
 
@@ -173,7 +175,7 @@ function fetchDataAndSubscribe() {
           // console.error(`Error subscribing to topic ${topicGaz}:`, err);
           return;
         }
-        console.log(`Subscribed to topic ${topicGaz}`);
+        // console.log(`Subscribed to topic ${topicGaz}`);
       });
 
       client.subscribe(topicNiv, (err) => {
@@ -181,7 +183,7 @@ function fetchDataAndSubscribe() {
           // console.error(`Error subscribing to topic ${topicNiv}:`, err);
           return;
         }
-        console.log(`Subscribed to topic ${topicNiv}`);
+        // console.log(`Subscribed to topic ${topicNiv}`);
       });
 
       client.on('message', (topic, message) => {
@@ -192,7 +194,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         } else if (topic === topicGaz) {
           bin.gaz = message.toString();
@@ -201,7 +203,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         } else if (topic === topicNiv) {
           bin.niv = message.toString();
@@ -210,7 +212,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         }
       });
@@ -230,7 +232,7 @@ function fetchDataAndSubscribe() {
           // console.error(`Error subscribing to topic ${topicGaz}:`, err);
           return;
         }
-        console.log(`Subscribed to topic ${topicGaz}`);
+        // console.log(`Subscribed to topic ${topicGaz}`);
       });
 
       client2.subscribe(topicNiv, (err) => {
@@ -238,7 +240,7 @@ function fetchDataAndSubscribe() {
           // console.error(`Error subscribing to topic ${topicNiv}:`, err);
           return;
         }
-        console.log(`Subscribed to topic ${topicNiv}`);
+        // console.log(`Subscribed to topic ${topicNiv}`);
       });
 
       client2.on('message', (topic, message) => {
@@ -249,7 +251,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         } else if (topic === topicGaz) {
           bin.gaz = message.toString();
@@ -258,7 +260,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         } else if (topic === topicNiv) {
           bin.niv = message.toString();
@@ -267,7 +269,7 @@ function fetchDataAndSubscribe() {
               // console.error('Error saving bin:', err);
               return;
             }
-            console.log('Bin updated:', bin);
+            // console.log('Bin updated:', bin);
           });
         }
       });
@@ -282,8 +284,8 @@ const axios = require('axios');
 
 app.post('/sendsms', (req, res) => {
   const { msg, tel } = req.body;
-  console.log(msg, tel)
-  console.log(msg);
+  // console.log(msg, tel)
+  // console.log(msg);
 
   const username = 'admin';
   const password = 'expressmobidle$$2018';
@@ -313,7 +315,7 @@ const body = JSON.stringify({tel:tel, msg:msg})
       });
     })
     .catch(error => {
-      console.error('Error sending SMS:', error);
+      // console.error('Error sending SMS:', error);
       res.status(500).json({
         success: false,
         message: 'Failed to send SMS',
