@@ -84,7 +84,7 @@ const UpdateBin = async (req, res) => {
         }
       ]
     });
-    
+
     if (existingBin) {
       return res.status(400).json({ success: false, error: 'Topics must be unique' });
     }
@@ -159,8 +159,8 @@ const updateStatus = async (req, res) => {
           console.log('Status updated to false after 20 seconds');
         }
       });
-      
-      
+
+
     }, 10000);
 
     res.status(200).json({ success: true, message: 'Bin updated successfully', bin });
@@ -222,7 +222,7 @@ const OpenBinByIDBin = async (req, res) => {
 
     // Find the user by their ID and populate the 'accessListBins' field
     const user = await userModel.findById(_id).populate('accessListBins')
-    
+
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -278,8 +278,8 @@ const PointBin1 = await pointBinV2.find()
       //   }
       // });
           await bin.save();
-      
-      
+
+
     }, 30000);
 
 
@@ -379,7 +379,7 @@ const FetchBinsNotInPointBins = async (req, res) => {
 
     // Find all bins that are not in PointBinV2
     const binsNotInPointBin = await BinModel.find({
-     
+
       _id: { $nin: binIdsInPointBin },
     }).exec();
 
@@ -391,7 +391,7 @@ const FetchBinsNotInPointBins = async (req, res) => {
 };
 
 
-module.exports = 
+module.exports =
 {
   CreateBin2,
   fetchAllBins,

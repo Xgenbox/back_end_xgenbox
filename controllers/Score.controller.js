@@ -119,7 +119,7 @@ const createScore = async (req, res) => {
 };
 
 
-module.exports = 
+module.exports =
 {
 
   AddPointScore,

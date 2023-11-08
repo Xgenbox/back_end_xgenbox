@@ -7,6 +7,9 @@ require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes.js');
 const collectorRoutes = require('./routes/Collector.route');
+const EntrepriseRoutes = require('./routes/Entreprise.route');
+const AppointmentRoutes = require('./routes/Appointment.route.js');
+const QuoteMobileRoute = require('./routes/QuoteMobile.route.js');
 const profiles = require('./routes/profiles.route');
 const demandeMunicipal = require('./routes/demandeMunicipal.route');
 const binRoute = require('./routes/bin.route');
@@ -55,6 +58,9 @@ app.post("/forgot-password", forgotPassword )
 app.post("/reset-password",isResetTokenValid,  resetPassword )
 app.use('/api/users', userRoutes);
 app.use('/api/collector', collectorRoutes);
+app.use('/api/entreprise', EntrepriseRoutes);
+app.use('/api/appointment', AppointmentRoutes);
+app.use('/api/QuoteMobile', QuoteMobileRoute);
 
 app.use('/api/profile', profiles);
 app.use('/api/access', access);
