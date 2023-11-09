@@ -101,6 +101,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   const AddCollector = async (req, res) => {
     const { isValid, errors } = CollectorAddInputValidator(req.body);
+    console.log(req.body)
 
     try {
       if (!isValid) {
@@ -142,11 +143,45 @@ const registerUser = asyncHandler(async (req, res, next) => {
     }
 }
 
+const findInProgressCollectors = async (req, res) => {
+  try {
+      const collectorsInProgress = await CollectorModel.find({ status: 'in progress' }).populate('user', ['name', 'email', 'role']);
+      res.status(200).json(collectorsInProgress);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+}
+
+const changeStatusToValid = async (req, res) => {
+  const collectorId = req.params.id; // Assuming the collector ID is in the URL parameters
+
+  try {
+      // Find the collector by ID
+      const collector = await CollectorModel.findById(collectorId);
+
+      if (!collector) {
+          return res.status(404).json({ message: 'Collector not found' });
+      }
+
+      // Update the status to 'valid'
+      collector.status = 'valid';
+
+      // Save the updated collector
+      await collector.save();
+
+      res.status(200).json({ message: 'Collector status updated to valid' });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
 
 
   module.exports = {
     AddCollector,
     registerUser,
-    findSingleCollector
+    findSingleCollector,
+    findInProgressCollectors,
+    changeStatusToValid
 
   };
