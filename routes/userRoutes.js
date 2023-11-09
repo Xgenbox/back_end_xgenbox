@@ -30,7 +30,8 @@ const {
   blockUser,
   deblockUser,
   getAllUserWhoHasASameAccessBin,
-  CreateFeedback
+  CreateFeedback,
+  deleteUserById
 } = require('../controllers/userController');
 const passport = require('passport');
 const protect = require('../middleware/authMiddleware.js');
@@ -42,6 +43,7 @@ router.route('/createReport').post(passport.authenticate('jwt', {session: false}
 router.route('/createSupport').post(passport.authenticate('jwt', {session: false}),CreateSupport)
 router.route('/createFeedback').post(passport.authenticate('jwt', {session: false}),CreateFeedback)
 router.route("/getUserCounts").get(getUsersCount)
+router.route("/deleteUserById/:id").get(deleteUserById)
 
 
 router.route('/getUsers').get(getUsers)

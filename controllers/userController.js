@@ -44,7 +44,7 @@ const authUser = async (req, res) => {
         responseSent = true;
                 return res.status(400).json(errors);
               }
-        
+
       console.log(user)
       if (!user) {
         errors.email = "Email not found";
@@ -85,7 +85,7 @@ const authUser = async (req, res) => {
       return res.status(500).json({success:false, message: "error" });
     }
   }
-  
+
 }
 
 const addAccessCode = async(req, res)=> {
@@ -93,10 +93,10 @@ const addAccessCode = async(req, res)=> {
   const {_id} = req.user
   console.log(code)
   console.log(_id)
-  
+
   console.log("code")
   try {
-   
+
       const access = await pointBinV2.findOne({ code: code });
       if(!access) {
         return res.status(404).json({success:false, message: "code not found" });
@@ -115,11 +115,11 @@ const addAccessCode = async(req, res)=> {
     await user.save();
 
 
-      
+
     res.status(200).json({ success: true, message: "Access added successfully" });
 
-     
-   
+
+
   } catch (error) {
     if (!responseSent) {
       responseSent = true;
@@ -148,7 +148,7 @@ const getCurrentAccessList = async(req, res)=> {
       return res.status(500).json({success:false, message: "error" });
     }
   }
-  
+
 }
 
 
@@ -160,7 +160,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const {avatar} = req.body;
 
   console.log(avatar)
-  
+
   try {
     if (!isValid) {
       res.status(404).json(errors);
@@ -176,7 +176,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
               email: req.body.email,
               password: bcrypt.hashSync(req.body.password, 10),
               role: req.body.role,
-             
+
 
             })
 
@@ -192,7 +192,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
               .catch(err => {
                 console.log(err)
               })
-              
+
             mailer.send({
               to: ["zbousnina@yahoo.com",user.email ],
               subject: "Verification code",
@@ -208,11 +208,11 @@ const registerUser = asyncHandler(async (req, res, next) => {
                   const token = jwt.sign(
                     {
                       id: user._id,
-                      
+
                       email: user.email,
                       role: user.role,
-                      
-                      
+
+
                     },
                     process.env.SECRET_KEY,
                     { expiresIn: Number.MAX_SAFE_INTEGER }
@@ -228,7 +228,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
                 console.log(err)
                 res.status(500).json({ success:false, message: "error" })
               })
-              
+
           }
         })
     }
@@ -241,6 +241,22 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   }
 })
+const deleteUserById = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+      // Find the user by ID and delete it
+      const deletedUser = await User.findByIdAndDelete(userId);
+
+      if (!deletedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({ message: 'User deleted successfully', deletedUser });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
 const registerGoogleUser = asyncHandler(async (req, res, next) => {
   console.log('hi')
   console.log(req.body);
@@ -292,7 +308,7 @@ const registerGoogleUser = asyncHandler(async (req, res, next) => {
           );
           responseSent = true;
           return res.header("auth-token", token).status(200).json({ status: true, token: "Bearer " + token });
-          
+
           // return res.header("auth-token", token).status(200).json({ success: true, token: "Bearer " + token })
           // res.status(400).json({ success: false, email: "Email already exists" });
         } else {
@@ -454,7 +470,7 @@ const verifyEmail = async (req, res) => {
   if (!isMatched) {
     return sendError(res, 'Please provide a valid token!');
   }
-  
+
   user.verified = true;
   await verificationTokenModels.findByIdAndDelete(token._id);
   await user.save();
@@ -544,8 +560,8 @@ const forgotPassword = async (req, res) => {
   const newToken = new resetTokenModels({
     owner: user._id,
     token: resetToken
-   
-    
+
+
   });
 
   await newToken.save();
@@ -582,8 +598,8 @@ const forgotPasswordWithCode = async (req, res) => {
   const newToken = new resetTokenModels({
     owner: user._id,
     token: resetToken
-   
-    
+
+
   });
 
   await newToken.save();
@@ -844,7 +860,7 @@ const getAllUserDetailsById = async (req, res) => {
 
 const getUserByEmail = async (req, res) => {
   const { email } = req.params
-  
+
   try {
     const user = await User.findOne({ email: email })
 
@@ -917,7 +933,7 @@ const deblockUser = async(req, res)=>  {
 //     _id: { $ne: currentUser._id },
 //   });
 
-  
+
 //   const populatedUsers = await Promise.all(
 //     users.map(async (user) => {
 //       const profile = await profileModels.findOne({ user: user._id });
@@ -967,16 +983,16 @@ const reportUser = async (req, res)=> {
 const CreateFeedback = async (req, res)=> {
   const { isValid, errors } = validateFeedbackInput(req.body);
   console.log(req.body);
-  
-  
-    
+
+
+
   const {_id} =req.user
   const {feedback} = req.body
   try {
     if (!isValid) {
       res.status(404).json(errors);
     } else {
-    
+
     const feedbacks = new FeedbackModel({
       user: _id,
       feedback
@@ -985,10 +1001,10 @@ const CreateFeedback = async (req, res)=> {
     res.status(201).json(createdFeedback)
   }
   } catch (error) {
-    
+
     res.status(400).json(error)
   }
-  
+
 }
 
 
@@ -1004,7 +1020,7 @@ module.exports = {
   updateUser,
   resetPassword,
   registerGoogleUser,
-  
+
   getCurrentAccessList,
   verifyEmail,
   forgotPassword,
@@ -1017,6 +1033,7 @@ module.exports = {
   blockUser,
   deblockUser,
   getAllUserWhoHasASameAccessBin,
-  CreateFeedback
+  CreateFeedback,
+  deleteUserById
 
 }
