@@ -243,6 +243,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 })
 const deleteUserById = async (req, res) => {
   const userId = req.params.id;
+  const profileId = req.params.idprofile;
 
   try {
       // Find the user by ID and delete it
@@ -257,6 +258,33 @@ const deleteUserById = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
+const deleteProfileAndUser = async (req, res) => {
+  const userId = req.params.id;
+  const profileId = req.params.idprofile;
+
+  try {
+    // Find the profile by ID and delete it
+    const deletedProfile = await profileModels.findByIdAndDelete(profileId);
+
+    if (!deletedProfile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // If userId is not null, delete the user
+    if (userId!=="0") {
+      const deletedUser = await User.findByIdAndDelete(userId);
+
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+    }
+
+    res.status(200).json({ message: 'Profile and User deleted successfully', deletedProfile });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const registerGoogleUser = asyncHandler(async (req, res, next) => {
   console.log('hi')
   console.log(req.body);
@@ -1034,6 +1062,6 @@ module.exports = {
   deblockUser,
   getAllUserWhoHasASameAccessBin,
   CreateFeedback,
-  deleteUserById
+  deleteProfileAndUser
 
 }
