@@ -68,6 +68,10 @@ router.get("/verify-token", isResetTokenValid, (req, res)=> {
 router.route('/profile/password/reset').post(protect ,resetPassword);
 router.route('/block/:id').put(blockUser);
 router.route('/deblock/:id').put(deblockUser);
+router.get('/checkTokenValidity', passport.authenticate('jwt', {session: false}), (req, res) => {
+  // If the control reaches here, the token is valid
+  res.status(200).json({ message: 'Token is valid' });
+});
 
 router
   .route('/:id')
