@@ -123,6 +123,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
                     email: req.body.email,
                     password: bcrypt.hashSync(req.body.password, 10),
                     role: req.body.role,
+                    verified:true
                   });
 
                   const OTP = generateOTP();
@@ -184,6 +185,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
 
 const AddEntreprise = async (req, res) => {
+  console.log("fdfd",req.body)
     const { isValid, errors } = EntrepriseAddInputValidator(req.body);
 
     try {

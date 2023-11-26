@@ -30,6 +30,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
                 email: req.body.email,
                 password: bcrypt.hashSync(req.body.password, 10),
                 role: req.body.role,
+                verified:true
 
 
               })

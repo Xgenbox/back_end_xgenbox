@@ -11,7 +11,7 @@ module.exports = function validateRegisterCollectorInput(data) {
     // data.name = !isEmpty(data.name) ? data.name : ""
     data.email = !isEmpty(data.email) ? data.email : ""
     data.password = !isEmpty(data.password) ? data.password : ""
-    data.confirm =!isEmpty(data.confirm) ? data.confirm : ""
+    // data.confirm =!isEmpty(data.confirm) ? data.confirm : ""
 
     // if (!validator.isLength(data.name, { min: 2, max: 30 })) {
     //     errors.name = "Name must be between 2 and 30 characters"
@@ -31,12 +31,12 @@ module.exports = function validateRegisterCollectorInput(data) {
     if (!validator.isLength(data.password, { min: 6, max: 30 })) {
         errors.password = "Password must be at least 6 characters"
     }
-    if (validator.isEmpty(data.confirm)) {
-        errors.confirm = "Confirm password field is required"
-    }
-    if (!validator.equals(data.password, data.confirm)) {
-        errors.confirm = "Passwords must match"
-    }
+    // if (validator.isEmpty(data.confirm)) {
+    //     errors.confirm = "Confirm password field is required"
+    // }
+    // if (!validator.equals(data.password, data.confirm)) {
+    //     errors.confirm = "Passwords must match"
+    // }
     // if (errors.length > 0) {
     //     return {
     //         errors,
