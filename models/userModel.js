@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const userSchema = mongoose.Schema(
     {
-       
+
         name: String,
         email: {
             type: String,
@@ -10,11 +10,11 @@ const userSchema = mongoose.Schema(
             unique: true,
             // required: true,
         },
-        password: String,   
+        password: String,
         role: {
             type: String,
             default: 'USER'
-    
+
         },
         verified: {
             type: Boolean,
@@ -37,10 +37,19 @@ const userSchema = mongoose.Schema(
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'PointBinV2',
                 // unique: true,
-                
+
             }
         ],
-        
+        medicineList : [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'medicine',
+                // unique: true,
+
+            }
+
+        ]
+
     },{
         timestamps: true
     }

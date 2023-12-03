@@ -36,12 +36,15 @@ const {
 const passport = require('passport');
 const protect = require('../middleware/authMiddleware.js');
 const { CreateReportOnuser, CreateSupport } = require('../controllers/Report.controller');
+const { addMedicine, fetchMedicineByUserId } = require('../controllers/medicine.controller.js');
 
 router.route('/').post(registerUser)
 router.route('/login').post(authUser)
 router.route('/createReport').post(passport.authenticate('jwt', {session: false}),CreateReportOnuser)
 router.route('/createSupport').post(passport.authenticate('jwt', {session: false}),CreateSupport)
 router.route('/createFeedback').post(passport.authenticate('jwt', {session: false}),CreateFeedback)
+router.route('/addmedicine').post(passport.authenticate('jwt', {session: false}),addMedicine)
+router.route('/fetchMedicineByUserId').get(passport.authenticate('jwt', {session: false}),fetchMedicineByUserId)
 router.route("/getUserCounts").get(getUsersCount)
 router.route("/deleteUserById/:idprofile/:id").get(deleteProfileAndUser)
 
