@@ -66,12 +66,79 @@ const fetchMedicineByUserId = async (req, res) => {
     }
 };
 
+const fetchMedicineByID = async (req, res) => {
+    const medicineID = req.params.id; // Assuming the ID is passed as a route parameter
+
+    try {
+      const medicine = await medicineModel.findById(medicineID); // Assuming you have a model named 'medicine1' for medicineSchema1
+
+      if (!medicine) {
+        // If medicine is not found, return an appropriate response
+        return res.status(404).json({ error: 'medicine not found' });
+      }
+
+      // If medicine is found, return the medicine object in the response
+      res.json(medicine);
+    } catch (error) {
+      // If any error occurs during the database query, return an error response
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+const updateMedicine = async (req, res)=> {
+    const medicineID = req.params.id; // Assuming the ID is passed as a route parameter
+
+    try {
+      const medicine = await medicineModel.findById(medicineID); // Assuming you have a model named 'medicine1' for medicineSchema1
+
+      if (!medicine) {
+        // If medicine is not found, return an appropriate response
+        return res.status(404).json({ error: 'medicine not found' });
+      }
+
+      // If medicine is found, update the medicine object and return it in the response
+      medicine.name = req.body.name;
+      await medicine.save();
+
+      res.json(medicine);
+    } catch (error) {
+      // If any error occurs during the database query, return an error response
+      res.status(500).json({ error: 'Internal server error' });
+    }
+
+}
+
+const deleteMedicine = async (req, res)=> {
+    const medicineID = req.params.id; // Assuming the ID is passed as a route parameter
+
+    try {
+      const medicine = await medicineModel.findById(medicineID); // Assuming you have a model named 'medicine1' for medicineSchema1
+
+      if (!medicine) {
+        // If medicine is not found, return an appropriate response
+        return res.status(404).json({ error: 'medicine not found' });
+      }
+
+      // If medicine is found, delete the medicine object and return it in the response
+      await medicine.delete();
+
+      res.json(medicine);
+    } catch (error) {
+      // If any error occurs during the database query, return an error response
+      res.status(500).json({ error: 'Internal server error' });
+    }
+
+
+}
 
 
 
 module.exports = {
     addMedicine,
-    fetchMedicineByUserId
+    fetchMedicineByUserId,
+    fetchMedicineByID,
+    updateMedicine,
+    deleteMedicine
 
 
   }

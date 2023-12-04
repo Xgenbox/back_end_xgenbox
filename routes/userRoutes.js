@@ -36,7 +36,7 @@ const {
 const passport = require('passport');
 const protect = require('../middleware/authMiddleware.js');
 const { CreateReportOnuser, CreateSupport } = require('../controllers/Report.controller');
-const { addMedicine, fetchMedicineByUserId } = require('../controllers/medicine.controller.js');
+const { addMedicine, fetchMedicineByUserId, fetchMedicineByID, updateMedicine, deleteMedicine } = require('../controllers/medicine.controller.js');
 
 router.route('/').post(registerUser)
 router.route('/login').post(authUser)
@@ -55,6 +55,7 @@ router.route('/getUsers').get(getUsers)
 //   .put(protect, updateUser)
 router.route('/verifyemail').post(verifyEmail)
 router.route('/deleteaccount').post(DeleteAccount)
+router.route('/deleteMedicine/:id').delete(deleteMedicine)
 router.route("/forgot-password").post( forgotPassword )
 router.route("/resendotp").post( resendOTP )
 router.route("/resendOTPDeleteAccount").post( resendOTPDeleteAccount )
@@ -71,6 +72,8 @@ router.get("/verify-token", isResetTokenValid, (req, res)=> {
 router.route('/profile/password/reset').post(protect ,resetPassword);
 router.route('/block/:id').put(blockUser);
 router.route('/deblock/:id').put(deblockUser);
+router.route('/updateMedicine/:id').put(updateMedicine);
+router.route('/fetchMedicineByid/:id').get(fetchMedicineByID);
 router.get('/checkTokenValidity', passport.authenticate('jwt', {session: false}), (req, res) => {
   // If the control reaches here, the token is valid
   res.status(200).json({ message: 'Token is valid' });
