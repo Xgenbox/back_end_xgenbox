@@ -91,10 +91,9 @@ const authUser = async (req, res) => {
 const addAccessCode = async(req, res)=> {
   const {code} = req.body
   const {_id} = req.user
-  console.log(code)
-  console.log(_id)
 
-  console.log("code")
+
+
   try {
 
       const access = await pointBinV2.findOne({ code: code });
