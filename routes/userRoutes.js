@@ -36,7 +36,7 @@ const {
 const passport = require('passport');
 const protect = require('../middleware/authMiddleware.js');
 const { CreateReportOnuser, CreateSupport } = require('../controllers/Report.controller');
-const { addMedicine, fetchMedicineByUserId, fetchMedicineByID, updateMedicine, deleteMedicine } = require('../controllers/medicine.controller.js');
+const { addMedicine, fetchMedicineByUserId, fetchMedicineByID, updateMedicine, deleteMedicine, AddToWaste } = require('../controllers/medicine.controller.js');
 
 router.route('/').post(registerUser)
 router.route('/login').post(authUser)
@@ -47,6 +47,7 @@ router.route('/addmedicine').post(passport.authenticate('jwt', {session: false})
 router.route('/fetchMedicineByUserId').get(passport.authenticate('jwt', {session: false}),fetchMedicineByUserId)
 router.route("/getUserCounts").get(getUsersCount)
 router.route("/deleteUserById/:idprofile/:id").get(deleteProfileAndUser)
+router.route("/AddToWaste/:medicineId").post(AddToWaste)
 
 
 router.route('/getUsers').get(getUsers)

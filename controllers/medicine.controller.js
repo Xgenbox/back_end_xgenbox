@@ -1,41 +1,41 @@
 const medicineModel = require('../models/medicine.model');
 const userModel = require('../models/userModel');
-
+const WasteModel = require('../models/waste.model');
 const addMedicine = async (req, res) => {
-    try {
-        const { name } = req.body; // Assuming that the medicine name is sent in the request body
+  try {
+      const { name } = req.body; // Assuming that the medicine name is sent in the request body
 
-        // Validate input (you may want to add more validation)
-        if (!name) {
-            return res.status(400).json({ error: 'Medicine name is required' });
-        }
+      // Validate input (you may want to add more validation)
+      if (!name) {
+          return res.status(400).json({ error: 'Medicine name is required' });
+      }
 
-        // Check if the medicine name is already in use
-        const existingMedicine = await medicineModel.findOne({ name });
+      // Check if the medicine name is already in use
+      const existingMedicine = await medicineModel.findOne({ name });
 
-        if (existingMedicine) {
-            return res.status(400).json({ error: 'Medicine name is already in use' });
-        }
+      if (existingMedicine) {
+          return res.status(400).json({ error: 'Medicine name is already in use' });
+      }
 
-        // Create a new medicine instance
-        const newMedicine = new medicineModel({
-            name,
-        });
+      // Create a new medicine instance
+      const newMedicine = new medicineModel({
+          name,
+      });
 
-        // Save the medicine to the database
-        await newMedicine.save();
+      // Save the medicine to the database
+      await newMedicine.save();
 
-        // Add the medicine to the user's medicine list
-        const user = await userModel.findById(req.user._id);
-        user.medicineList.push(newMedicine);
-        await user.save();
+      // Add the medicine to the user's medicine list
+      const user = await userModel.findById(req.user._id);
+      user.medicineList.push(newMedicine);
+      await user.save();
 
-        // Respond with success message
-        res.status(201).json({ message: 'Medicine added successfully', data: newMedicine });
-    } catch (error) {
-        console.error('Error adding medicine:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+      // Respond with success message
+      res.status(201).json({ message: 'Medicine added successfully', data: newMedicine });
+  } catch (error) {
+      console.error('Error adding medicine:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 
@@ -131,6 +131,34 @@ const deleteMedicine = async (req, res)=> {
 
 }
 
+const AddToWaste = async (req, res) => {
+  try {
+    // Assuming you have a unique identifier for the medicine, like an ID
+    const medicineId = req.params.medicineId; // Adjust this according to your route
+
+    // Find the medicine by ID
+    const medicine = await medicineModel.findById(medicineId);
+
+    // If medicine is not found, return an error or handle it accordingly
+    if (!medicine) {
+      return res.status(404).json({ error: 'Medicine not found' });
+    }
+
+    // Increment the wasteCount by 1
+    medicine.wasteCount += 1;
+
+    // Save the updated medicine
+    await medicine.save();
+
+    // Send a response or do something else as needed
+    res.status(200).json({ message: 'Waste count incremented successfully', newWasteCount: medicine.wasteCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 
 
 module.exports = {
@@ -138,7 +166,9 @@ module.exports = {
     fetchMedicineByUserId,
     fetchMedicineByID,
     updateMedicine,
-    deleteMedicine
+    deleteMedicine,
+    AddToWaste
+
 
 
   }
