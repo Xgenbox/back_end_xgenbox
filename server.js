@@ -27,6 +27,8 @@ const governoratesModel = require('./models/governorates.model');
 const access = require('./routes/access.route');
 const BinModel = require('./models/Bin.model');
 const app = express();
+var cors = require('cors')
+
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
@@ -34,6 +36,8 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+app.use(cors())
 // passport
 app.use(passport.initialize())
 require('./security/passport')(passport)

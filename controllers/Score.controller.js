@@ -2,7 +2,7 @@ const GiftModel = require("../models/Gift.model");
 const scoreModel = require("../models/score.model");
 
 const AddPointScore = async (req, res) => {
-  console.log("score useId: ", req.user.id)
+  console.log("score useId: ", req.user.id);
   try {
     let score = await scoreModel.findOne({ user: req.user.id }); // Assuming you have a route parameter 'userId' to identify the user
 
@@ -36,11 +36,9 @@ const AddPointScore = async (req, res) => {
     return res.status(200).json({ score });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 // const findScore = async (req, res) => {
 //   try {
@@ -65,29 +63,35 @@ const AddPointScore = async (req, res) => {
 
 const findScore = async (req, res) => {
   try {
-    const userScore = await scoreModel.findOne({ user: req.user.id }).populate('gift');
-
+    const userScore = await scoreModel
+      .findOne({ user: req.user.id })
+      .populate("gift");
     const scores = await scoreModel
       .find({ user: { $ne: req.user.id } }) // Exclude the current user's score
-      .sort({ score: -1, 'gift.length': -1 }) // Sort scores in descending order by score and then by the number of gifts
-      .populate('gift'); // Populate the 'gift' field with the corresponding gift documents
+      .sort({ score: -1, "gift.length": -1 }) // Sort scores in descending order by score and then by the number of gifts
+      .populate("gift"); // Populate the 'gift' field with the corresponding gift documents
 
     if (scores.length === 0) {
-      return res.status(404).json({ message: 'No scores found' });
+      return res.status(404).json({ message: "No scores found" });
     }
-
     // Find the index of the current user's score within the sorted scores
-    const userIndex = scores.findIndex((score) => score.score === userScore.score && score.gift.length === userScore.gift.length) + 1;
+    const userIndex =
+      scores.findIndex(
+        (score) =>
+          score.score === userScore.score &&
+          score.gift.length === userScore.gift.length
+      ) + 1;
 
     const topScores = scores.slice(0, 10); // Get the top 10 scores
 
-    return res.status(200).json({ score: userScore, rank: userIndex, topScores });
+    return res
+      .status(200)
+      .json({ score: userScore, rank: userIndex, topScores });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Helper function to generate a random recharge number
 const generateRechargeNumber = () => {
@@ -98,14 +102,16 @@ const generateRechargeNumber = () => {
 };
 
 const createScore = async (req, res) => {
-  const  userId  = req.user.id; // Assuming userId is provided in the request body
+  const userId = req.user.id; // Assuming userId is provided in the request body
 
   try {
     // Check if a score already exists for the user
     const existingScore = await scoreModel.findOne({ user: userId });
 
     if (existingScore) {
-      return res.status(400).json({ message: 'Score already exists for the user.' });
+      return res
+        .status(400)
+        .json({ message: "Score already exists for the user." });
     }
 
     // Create a new score if it doesn't exist
@@ -113,17 +119,13 @@ const createScore = async (req, res) => {
 
     res.status(201).json(newScore);
   } catch (error) {
-    console.error('Error creating score:', error);
-    res.status(500).json({ message: 'Failed to create score.' });
+    console.error("Error creating score:", error);
+    res.status(500).json({ message: "Failed to create score." });
   }
 };
 
-
-module.exports =
-{
-
+module.exports = {
   AddPointScore,
   findScore,
-  createScore
-
-}
+  createScore,
+};
