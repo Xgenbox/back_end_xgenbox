@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejsback
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejsback
+  template:
+    metadata:
+      labels:
+        app: nodejsback
+    spec:
+      containers:
+        - name: nodejsback
+          image: xgenbox/my-node-app-image:1.0
+          imagePullPolicy: IfNotPresent   
+          ports:
+            - containerPort: 4000
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo:27017/todo-app
+      restartPolicy: Always
