@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon ./bin/www"
+   "sonar": "sonar-scanner -Dsonar.projectKey=nodejs-app -Dsonar.sources=."
   },
   "author": "",
   "license": "ISC",
@@ -40,3 +41,5 @@
     "validator": "^13.9.0"
   }
 }
+
+
