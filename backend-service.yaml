@@ -9,7 +9,7 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: Service
@@ -22,4 +22,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 4000
-  type: LoadBalancer
+  type: NodePort
